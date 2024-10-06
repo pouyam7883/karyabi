@@ -1,2 +1,4 @@
 # karyabi
 personal project
+
+## Notes 
