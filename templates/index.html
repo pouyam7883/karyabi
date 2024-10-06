@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صفحه اصلی</title>
+    <style>
+        /* Resetting some default styles */
+        body, h1, h2, h3, p {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Vazir', sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #fff;
+            color: #333;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000; /* Ensure the header stays on top */
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .menu-button {
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: color 0.3s, border-color 0.3s;
+            border: 2px solid transparent;
+            margin-right: 20px; /* فاصله بین دکمه‌ها */
+        }
+
+        .login-register {
+            color: #658c9a;
+            border-color: #658c9a;
+        }
+
+        .login-register:hover, .login-register:focus {
+            color: #6f42c1;
+            border-color: #6f42c1;
+            background-color: transparent; /* حفظ رنگ پس‌زمینه شفاف */
+        }
+
+        .employer-section {
+            color: #ffffff;
+            background-color: #6f42c1; /* بنفش */
+            border-color: #6f42c1;
+        }
+
+        .employer-section:hover, .employer-section:focus {
+            background-color: #6a1b9a;
+            color: white;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        main {
+            padding-top: 60px; /* Adjust based on header height */
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: row-reverse; /* راست‌چین کردن محتوا */
+            justify-content: center;
+            align-items: center;
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-container img {
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+        }
+
+        .text-content {
+            flex: 2;
+            padding-right: 20px; /* تغییر به راست‌چین */
+        }
+
+        .text-content h2 {
+            color: #6f42c1;
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-align: right; /* راست‌چین کردن عنوان */
+        }
+
+        .text-content p {
+            font-size: 16px;
+            margin-bottom: 20px;
+            text-align: right; /* راست‌چین کردن متن */
+        }
+
+        .faq-section {
+            max-width: 1200px; /* مطابقت با عرض کادر اصلی برنامه */
+            margin: 30px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .faq-section h2 {
+            color: #6f42c1;
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-align: right; /* راست‌چین کردن عنوان سوالات متداول */
+        }
+
+        .faq-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .faq-item {
+            margin-bottom: 10px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            background-color: #6f42c1;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            text-align: right; /* راست‌چین کردن سوالات */
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .faq-answer {
+            display: none;
+            padding: 10px;
+            background-color: #f0f9f0;
+            border: 2px solid #6f42c1;
+            border-radius: 10px;
+            margin-top: 5px;
+            text-align: right; /* راست‌چین کردن پاسخ‌ها */
+        }
+
+        .faq-question:hover {
+            background-color: #5a2e91;
+        }
+
+        footer {
+            background-color: #fff;
+            border-top: 1px solid #ddd;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-menu {
+            display: flex;
+            justify-content: space-between;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section {
+            flex: 1;
+            margin: 0 10px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .footer-section h3 {
+            margin-bottom: 10px;
+            text-align: right; /* راست‌چین کردن عنوان بخش */
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+            text-align: right; /* راست‌چین کردن لیست‌ها */
+        }
+
+        .footer-section ul li {
+            margin: 5px 0;
+        }
+
+        .footer-section a {
+            color: #333;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: #6f42c1;
+        }
+
+        .copyright {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div>
+                <a href="{{ url_for('auth') }}" class="menu-button login-register">ورود | ثبت‌نام</a>
+                <a href="{{ url_for('employer') }}" class="menu-button employer-section">بخش کارفرمایان</a>
+            </div>
+            <div class="logo">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="لوگو">
+                <h1>سامانه جامع و یکپارچه کاریابی</h1>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="main-content">
+            <div class="image-container">
+                <img src="{{ url_for('static', filename='profile.jpg') }}" alt="تصویر پروفایل">
+            </div>
+            <div class="text-content">
+                <h2>خوش آمدید!</h2>
+                <p>به وب‌سایت ما خوش آمدید. اینجا می‌توانید وارد شوید، ثبت نام کنید و یا از خدمات مختلف ما بهره‌مند شوید. برای شروع، از منوی بالا استفاده کنید.</p>
+            </div>
+        </div>
+
+        <section class="faq-section">
+            <h2>سوالات متداول</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <button class="faq-question">سوال ۱: چه طور می‌توانم ثبت نام کنم؟</button>
+                    <div class="faq-answer">
+                        <p>برای ثبت نام، ابتدا باید فرم ثبت نام را پر کنید و سپس اطلاعات خود را ارسال کنید.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">سوال ۲: چگونه می‌توانم از خدمات شما استفاده کنم؟</button>
+                    <div class="faq-answer">
+                        <p>شما می‌توانید با ورود به حساب کاربری خود و انتخاب خدمات مورد نظر، از امکانات ما بهره‌مند شوید.</p>
+                    </div>
+                </div>
+                <!-- سوالات بیشتر اضافه کنید -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-menu">
+            <div class="footer-section">
+                <h3>سامانه</h3>
+                <ul>
+                    <li><a href="{{ url_for('tamasbama') }}">تماس با ما</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>کارفرمایان</h3>
+                <ul>
+                    <li><a href="#">ثبت آگهی استخدام</a></li>
+                    <li><a href="#">ورود کارفرمایان</a></li>
+                    <li><a href="#">ثبت نام کارفرمایان</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>کارجویان</h3>
+                <ul>
+                    <li><a href="#">ثبت آگهی استخدام</a></li>
+                    <li><a href="#">ورود کارجویان</a></li>
+                    <li><a href="#">ثبت نام کارجویان</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>کلیه حقوق برای «ای استخدام» محفوظ بوده و هرگونه استفاده از مطالب صرفاً با مجوز کتبی مجاز است.</p>
+        </div>
+    </footer>
+</body>
+</html>

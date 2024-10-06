@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="fa">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>تکمیل اطلاعات</title>
+        <link href="https://fonts.googleapis.com/css2?family=Vazir&display=swap" rel="stylesheet">
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        <style>
+            body {
+                font-family: 'Vazir', sans-serif; /* استفاده از فونت نستعلیق */
+                background-color: #f4f4f4;
+                color: #333;
+                margin: 0;
+                padding: 20px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+            
+            .container {
+                background: linear-gradient(145deg, #ffffff, #e6e6e6);
+                border-radius: 15px;
+                box-shadow: 10px 10px 20px #d1d1d1, -10px -10px 20px #ffffff;
+                padding: 20px;
+                width: 600px; /* افزایش عرض برای جداول */
+                text-align: center;
+            }
+            
+            h1 {
+                color: #4CAF50;
+                margin-bottom: 20px;
+            }
+            
+            .agreement-container {
+                background-color: #f0f0f0;
+                padding: 10px;
+                border-radius: 5px;
+                display: flex;
+                align-items: center;
+            }
+            
+            .agreement-text {
+                color: #808080;
+                font-size: 14px;
+            }
+            
+            .agreement-container input[type="checkbox"] {
+                margin-right: 10px;
+            }
+            
+            .agreement-container.active .agreement-text {
+                color: #333;
+                font-weight: bold;
+            }
+            
+            .captcha-container {
+                display: flex;
+                align-items: center;
+            }
+            
+            .commitment-box {
+                border: 2px solid #ccc;
+                border-radius: 5px;
+                padding: 15px;
+                background-color: #f9f9f9;
+                margin: 10px 0;
+            }
+            
+            .button-container {
+                display: flex;
+                justify-content: space-between; /* فاصله بین دکمه‌ها */
+                margin-top: 20px; /* فاصله از بالای دکمه‌ها */
+            }
+            
+            .button {
+                padding: 12px 24px; /* فاصله داخلی */
+                border: none; /* حذف کادر */
+                border-radius: 5px; /* گرد کردن گوشه‌ها */
+                cursor: pointer; /* نشانگر قابل کلیک */
+                font-size: 16px; /* اندازه فونت */
+                position: relative; /* برای افکت‌های گرافیکی */
+                transition: all 0.3s; /* انیمیشن تغییرات */
+            }
+            
+            .prev {
+                background-color: #4CAF50; /* رنگ دکمه قبلی */
+                color: white; /* رنگ متن */
+            }
+            
+            .next {
+                background-color: #007bff; /* رنگ دکمه بعدی */
+                color: white; /* رنگ متن */
+            }
+            
+            .button:hover {
+                transform: translateY(-2px); /* حرکت به سمت بالا در حالت هاور */
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* سایه برای جلوه بهتر */
+            }
+            
+            .button:active {
+                transform: translateY(1px); /* حرکت به سمت پایین در حالت کلیک */
+                box-shadow: none; /* حذف سایه */
+            }
+            
+            .button:before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(255, 255, 255, 0.2); /* پس‌زمینه روشن */
+                border-radius: 5px;
+                opacity: 0;
+                transition: opacity 0.3s; /* انیمیشن تغییر شفافیت */
+            }
+            
+            .button:hover:before {
+                opacity: 1; /* نمایان شدن پس‌زمینه در حالت هاور */
+            }
+            
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            
+            .checkbox-container {
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                margin: 20px 0;
+            }
+            
+            .checkbox {
+                display: flex;
+                align-items: center;
+                margin: 10px;
+                cursor: pointer;
+                padding: 10px;
+                border: 2px solid #ccc;
+                border-radius: 5px;
+                transition: border-color 0.3s, background-color 0.3s;
+                width: 100%; /* عرض کامل */
+                box-sizing: border-box; /* شامل padding و border در عرض */
+            }
+            
+            .checkbox.active {
+                border-color: #4CAF50;
+                background-color: #f0f9f0;
+            }
+            
+            .checkbox input[type="radio"] {
+                display: none;
+            }
+            
+            .checkbox-label {
+                font-weight: bold;
+                color: #333;
+            }
+            
+            .input-other {
+                display: none; /* مخفی کردن فیلد "سایر" در ابتدا */
+                margin-top: 10px;
+            }
+            
+            .input-other input {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                transition: border-color 0.3s;
+            }
+            
+            .input-other input:focus {
+                border-color: rgba(255, 0, 0, 0.8);
+                outline: none;
+                box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+            }
+            
+            .button {
+                padding: 10px 20px; /* فاصله داخلی */
+                background-color: #007bff; /* رنگ آبی */
+                color: white; /* رنگ متن سفید */
+                border: none; /* حذف کادر */
+                border-radius: 5px; /* گرد کردن گوشه‌ها */
+                cursor: pointer; /* نشانگر همیشه قابل کلیک */
+                transition: background-color 0.3s; /* انیمیشن تغییر رنگ */
+                flex: 1; /* عرض دکمه‌ها را یکسان می‌کند */
+                margin: 0 5px; /* فاصله بین دکمه‌ها */
+            }
+            
+            .button:hover {
+                background-color: #0056b3; /* رنگ آبی تیره برای حالت هاور */
+            }
+            
+            .form-group {
+                margin-bottom: 10px;
+                text-align: left; /* چپ‌چین کردن متن */
+            }
+            
+            .form-group label {
+                display: block;
+                font-weight: bold;
+            }
+            
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                transition: border-color 0.3s;
+                box-sizing: border-box; /* شامل padding و border */
+            }
+            
+            .form-group input:focus,
+            .form-group textarea:focus,
+            .form-group select:focus {
+                border-color: rgba(255, 0, 0, 0.8);
+                outline: none;
+                box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+            }
+            
+            td {
+                padding: 10px;
+                border: 1px solid #ccc;
+            }
+            
+            .table-container {
+                margin-top: 20px;
+            }
+            
+            th,
+            td {
+                border: 1px solid #ccc;
+                padding: 8px;
+                text-align: center;
+            }
+            
+            th {
+                background-color: #f0f9f0;
+            }
+            
+            input[type="text"] {
+                width: 100%; /* عرض فیلدها برابر با عرض ستون */
+                padding: 8px;
+                box-sizing: border-box; /* برای جلوگیری از خروج فیلد از کادر */
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+            
+            .add-row {
+                margin-top: 10px;
+                cursor: pointer;
+                color: #2196F3;
+                text-decoration: underline;
+            }
+            
+            .progress-container {
+                display: flex;
+                flex-direction: column;
+                margin-bottom: 20px;
+            }
+            
+            .bar-progress {
+                display: flex;
+                width: 100%;
+                height: 10px;
+                background-color: #e0e0e0;
+                border-radius: 5px;
+                overflow: hidden;
+            }
+            
+            .bar-item {
+                flex: 1;
+                background-color: #e0e0e0;
+                transition: background-color 0.3s;
+            }
+            
+            .radio-container {
+                display: flex;
+                justify-content: center;
+                margin-top: 10px;
+            }
+            
+            .radio-option {
+                display: flex;
+                align-items: center;
+                margin: 0 10px;
+                cursor: pointer;
+                padding: 10px 20px;
+                border: 2px solid #ccc;
+                border-radius: 20px;
+                transition: border-color 0.3s, background-color 0.3s;
+            }
+            
+            .radio-option.active {
+                border-color: #4CAF50;
+                background-color: #f0f9f0;
+            }
+            
+            .radio-option input[type="radio"] {
+                display: none;
+            }
+            
+            .radio-option label {
+                font-size: 18px;
+                font-weight: bold;
+                color: #333;
+            }
+            
+            .bar-item.active {
+                background-color: #4CAF50;
+            }
+            
+            .current-step {
+                margin-top: 5px;
+                font-weight: bold;
+                color: #4CAF50;
+            }
+            
+            .page {
+                display: none;
+                margin: 20px 0;
+            }
+            
+            .active {
+                display: block;
+            }
+            
+            .summary {
+                display: none;
+                margin-top: 20px;
+                padding: 10px;
+                background-color: #fff;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+            
+            .input-other textarea {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+            
+            .input-other textarea:focus {
+                border-color: rgba(255, 0, 0, 0.8);
+                outline: none;
+                box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+            }
+
+
+            </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>لطفا مشخصات و اطلاعات مورد نیاز را جهت <strong style="color: #4CAF50;">بررسی برای استخدام</strong> تکمیل نمایید</h1>
+
+        <div class="progress-container">
+            <div class="bar-progress" id="barProgress">
+                <!-- نوار پیشرفت -->
+                <div class="bar-item" id="barItem1"></div>
+                <div class="bar-item" id="barItem2"></div>
+                <div class="bar-item" id="barItem3"></div>
+                <div class="bar-item" id="barItem4"></div>
+                <div class="bar-item" id="barItem5"></div>
+                <div class="bar-item" id="barItem6"></div>
+                <div class="bar-item" id="barItem7"></div>
+                <div class="bar-item" id="barItem8"></div>
+                <div class="bar-item" id="barItem9"></div>
+                <div class="bar-item" id="barItem10"></div>
+                <div class="bar-item" id="barItem11"></div>
+                <div class="bar-item" id="barItem12"></div>
+                <div class="bar-item" id="barItem13"></div>
+                <div class="bar-item" id="barItem14"></div>
+                <div class="bar-item" id="barItem15"></div>
+                <div class="bar-item" id="barItem16"></div>
+            </div>
+            <div id="currentStep" class="current-step">مرحله 1 از 16</div>
+        </div>
+        <form id="completionForm" method="POST" action="/completion">
+
+            <!-- Page 1 -->
+            <div class="page active" id="page1">
+                <h2>1- اطلاعات شخصی</h2>
+                <h4>1- Personal Information</h4>
+                <div class="form-group">
+                    <label for="gender">جنسیت:</label>
+                    <select id="gender" name="gender">
+                        <option value="male">مرد</option>
+                        <option value="female">زن</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="Name">نام:</label>
+                    <input type="text" name="name" id="Name" placeholder="نام خود را وارد کنید" value="{{ user_data.name }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="LastName">نام خانوادگی:</label>
+                    <input type="text" name="last_name" id="LastName" placeholder="نام خانوادگی خود را وارد کنید" value="{{ user_data.last_name }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="FatherName">نام پدر:</label>
+                    <input type="text" name="father_name" id="FatherName" placeholder="نام پدر خود را وارد کنید" 
+                    value="{{ user_data.father_name }}" required>                </div>
+                <div class="form-group">
+                    <label for="BirthDate">تاریخ تولد:</label>
+                    <input type="date" name="birth_date" id="BirthDate" 
+                    value="{{ user_data.birth_date }}" required>                </div>
+                <div class="form-group">
+                    <label for="BirthPlace">محل تولد:</label>
+                    <input type="text" name="birth_place" id="BirthPlace" placeholder="محل تولد خود را وارد کنید" 
+                    value="{{ user_data.birth_place }}" required>                </div>
+                <div class="button-container">
+                    <button type="button" onclick="nextPage(1)">بعدی <span class="arrow">❯</span></button>
+                </div>
+            </div>
+        
+            <div class="page" id="page2">
+                <h2>2- اطلاعات شناسایی</h2>
+                <h4>2- Identification Information</h4>
+                <div class="form-group">
+                    <label for="NationalCode">کد ملی:</label>
+                    <input type="text" id="NationalCode" name="national_code" value="{{ user_data['national_code'] }}" placeholder="کد ملی خود را وارد کنید" readonly>
+                </div>
+            
+                <div class="form-group">
+                    <label for="Email">ایمیل:</label>
+                    <input type="email" id="Email" name="email" value="{{ user_data['email'] }}" placeholder="ایمیل خود را وارد کنید">
+                </div>
+            
+                <div class="form-group">
+                    <label for="BirthCertificateNumber">شماره شناسنامه:</label>
+                    <input type="number" id="BirthCertificateNumber" name="birth_certificate_number" value="{{ user_data['birth_certificate_number'] }}" placeholder="شماره شناسنامه خود را وارد کنید">
+                </div>
+            
+                <div class="form-group">
+                    <label for="IssuancePlace">محل صدور:</label>
+                    <input type="text" id="IssuancePlace" name="issuance_place" value="{{ user_data['issuance_place'] }}" placeholder="محل صدور شناسنامه را وارد کنید">
+                </div>
+            
+                <div class="form-group">
+                    <label for="Religion">دین:</label>
+                    <input type="text" id="Religion" name="religion" value="{{ user_data['religion'] }}" placeholder="دین خود را وارد کنید">
+                </div>
+            
+                <div class="form-group">
+                    <label for="Nationality">ملیت:</label>
+                    <input type="text" id="Nationality" name="nationality" value="{{ user_data['nationality'] }}" placeholder="ملیت خود را وارد کنید">
+                </div>
+            
+                <div class="button-container">
+                    <button type="button" onclick="prevPage(2)"><span class="arrow">❮</span> قبلی</button>
+                    <button type="button" onclick="nextPage(2)">بعدی <span class="arrow">❯</span></button>
+                </div>
+            </div>
+            
+            <div class="page" id="page3">
+                <h2>2/2- اطلاعات شناسایی</h2>
+                <h4>2/2- Identification Information</h4>
+            
+                <div class="form-group">
+                    <label for="MaritalStatus">وضعیت تاهل:</label>
+                    <select id="MaritalStatus" name="marital_status" onchange="toggleChildren()">
+                        <option value="single" {% if user_data['marital_status'] == 'single' %} selected {% endif %}>مجرد</option>
+                        <option value="married" {% if user_data['marital_status'] == 'married' %} selected {% endif %}>متاهل</option>
+                    </select>
+                </div>
+            
+                <div class="form-group" id="childrenGroup" style="display: {% if user_data['marital_status'] == 'married' %} block {% else %} none {% endif %};">
+                    <label for="ChildrenCount">تعداد فرزندان:</label>
+                    <input type="number" id="ChildrenCount" name="children_count" value="{{ user_data['children_count'] }}" placeholder="تعداد فرزندان را وارد کنید">
+                </div>
+            
+                <div class="form-group">
+                    <label for="HealthStatus">آیا از نظر روحی و جسمانی در سلامت کامل به سر می برید؟</label>
+                    <select id="HealthStatus" name="health_status" onchange="toggleHealthDetails()">
+                        <option value="yes" {% if user_data['health_status'] == 'yes' %} selected {% endif %}>بله</option>
+                        <option value="no" {% if user_data['health_status'] == 'no' %} selected {% endif %}>خیر</option>
+                    </select>
+                </div>
+            
+                <div class="form-group" id="healthDetailGroup" style="display: {% if user_data['health_status'] == 'no' %} block {% else %} none {% endif %};">
+                    <label for="HealthDetails">توضیح دهید:</label>
+                    <textarea id="HealthDetails" name="health_details" placeholder="توضیحات خود را وارد کنید">{{ user_data['health_details'] }}</textarea>
+                </div>
+            
+                <div class="button-container">
+                    <button type="button" onclick="prevPage(3)"><span class="arrow">❮</span> قبلی</button>
+                    <button type="button" onclick="nextPage(3)">بعدی <span class="arrow">❯</span></button>
+                </div>
+            </div>
+            
+            <div class="page" id="page4">
+                <h2>3- خدمت نظام وظیفه</h2>
+                <h4>3- Military Service</h4>
+                <div class="form-group">
+                    <label for="ServiceStatus">وضعیت خدمت:</label>
+                    <select id="ServiceStatus" name="service_status">
+                        <option value="completed" {% if user_data['service_status'] == 'completed' %} selected {% endif %}>انجام داده</option>
+                        <option value="exempted" {% if user_data['service_status'] == 'exempted' %} selected {% endif %}>معاف</option>
+                        <option value="deferred" {% if user_data['service_status'] == 'deferred' %} selected {% endif %}>مشمول</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ExemptionDetails">نوع و علت معافیت:</label>
+                    <textarea id="ExemptionDetails" name="exemption_details" placeholder="نوع و علت معافیت را وارد کنید">{{ user_data['exemption_details'] }}</textarea>
+                </div>
+                <div class="button-container">
+                    <button type="button" onclick="prevPage(4)"><span class="arrow">❮</span> قبلی</button>
+                    <button type="button" onclick="nextPage(4)">بعدی <span class="arrow">❯</span></button>
+                </div>
+            </div>
+        
+            
+            <div class="page" id="page5">
+                <h2>4- سوابق تحصیلی و آموزشی</h2>
+                <h4>4- Educational Background</h4>
+                <div class="form-group">
+                    <label for="LastDegree">آخرین مدرک تحصیلی:</label>
+                    <input type="text" id="LastDegree" name="last_degree" value="{{ user_data['last_degree'] }}" placeholder="آخرین مدرک تحصیلی خود را وارد کنید">
+                </div>
+                <div class="form-group">
+                    <label for="FieldOfStudy">رشته تحصیلی:</label>
+                    <input type="text" id="FieldOfStudy" name="field_of_study" value="{{ user_data['field_of_study'] }}" placeholder="رشته تحصیلی خود را وارد کنید">
+                </div>
+                <div class="form-group">
+                    <label for="GPA">معدل کل:</label>
+                    <input type="number" id="GPA" name="gpa" value="{{ user_data['gpa'] }}" placeholder="معدل کل خود را وارد کنید">
+                </div>
+                <div class="form-group">
+                    <label for="GraduationDate">تاریخ پایان:</label>
+                    <input type="date" id="GraduationDate" name="graduation_date" value="{{ user_data['graduation_date'] }}">
+                </div>
+                <div class="form-group">
+                    <label for="UniversityType">نوع دانشگاه:</label>
+                    <select id="UniversityType" name="university_type">
+                        <option value="Governmental" {% if user_data['university_type'] == 'Governmental' %} selected {% endif %}>دولتی</option>
+                        <option value="free" {% if user_data['university_type'] == 'free' %} selected {% endif %}>آزاد</option>
+                        <option value="message of light" {% if user_data['university_type'] == 'message of light' %} selected {% endif %}>پیام نور</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="InstituteName">نام مؤسسه آموزشی:</label>
+                    <input type="text" id="InstituteName" name="institute_name" value="{{ user_data['institute_name'] }}" placeholder="نام مؤسسه آموزشی خود را وارد کنید">
+                </div>
+                <div class="form-group">
+                    <label for="CityCountry">شهر - کشور:</label>
+                    <input type="text" id="CityCountry" name="city_country" value="{{ user_data['city_country'] }}" placeholder="شهر - کشور خود را وارد کنید">
+                </div>
+                <div class="button-container">
+                    <button type="button" onclick="prevPage(5)"><span class="arrow">❮</span> قبلی</button>
+                    <button type="button" onclick="nextPage(5)">بعدی <span class="arrow">❯</span></button>
+                </div>
+            </div>
+            
+            <div class="page" id="page6">
+                <h2>5- تجربیات شغلی</h2>
+                <h4>5- Work Experience</h4>
+                <div class="form-group">
+                    <label for="OrganizationName">نام سازمان یا شرکت:</label>
+                    <input type="text" id="OrganizationName" name="organization_name" value="{{ user_data['organization_name'] }}" placeholder="وارد کنید">
+                </div>
+                <div class="form-group">
+                    <label for="JobTitle">سمت / شغل:</label>
+                    <input type="text" id="JobTitle" name="job_title" value="{{ user_data['job_title'] }}" placeholder="وارد کنید">
+                </div>
+                <div class="form-group">
+                    <label for="ContactNumber">شماره تماس:</label>
+                    <input type="number" id="ContactNumber" name="contact_number" value="{{ user_data['contact_number'] }}" placeholder="وارد کنید">
+                </div>
+                <div class="form-group">
+                    <label for="StartDate">تاریخ شروع:</label>
+                    <input type="date" id="StartDate" name="start_date" value="{{ user_data['start_date'] }}">
+                </div>
+                <div class="form-group">
+                    <label for="EndDate">تاریخ پایان:</label>
+                    <input type="date" id="EndDate" name="end_date" value="{{ user_data['end_date'] }}">
+                </div>
+                <div class="form-group">
+                    <label for="LastSalary">آخرین حقوق و مزایا/ریال:</label>
+                    <input type="number" id="LastSalary" name="last_salary" value="{{ user_data['last_salary'] }}" placeholder="وارد کنید">
+                </div>
+                <div class="form-group">
+                    <label for="ReasonForLeaving">علت ترک خدمت:</label>
+                    <input type="text" id="ReasonForLeaving" name="reason_for_leaving" value="{{ user_data['reason_for_leaving'] }}" placeholder="وارد کنید">
+                </div>
+                <div class="button-container">
+                    <button type="button" onclick="prevPage(6)"><span class="arrow">❮</span> قبلی</button>
+                    <button type="button" onclick="nextPage(6)">بعدی <span class="arrow">❯</span></button>
+                </div>
+            </div>
+            
+            <div class="page" id="page7">
+                <h2>6- آشنایی به زبان‌های خارجی و کامپیوتر:</h2>
+                <h4>Language Proficiency and Computer Skills</h4>
+                <h3>وضعیت/زبان انگلیسی</h3>
+                <div class="form-group">
+                    <label for="reading">خواندن:</label>
+                    <select id="reading" name="english_reading">
+                        <option value="weak" {% if user_data['english_reading'] == 'weak' %} selected {% endif %}>ضعیف</option>
+                        <option value="medium" {% if user_data['english_reading'] == 'medium' %} selected {% endif %}>متوسط</option>
+                        <option value="good" {% if user_data['english_reading'] == 'good' %} selected {% endif %}>خوب</option>
+                        <option value="excellent" {% if user_data['english_reading'] == 'excellent' %} selected {% endif %}>عالی</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="writing">نوشتن:</label>
+                    <select id="writing" name="english_writing">
+                        <option value="weak" {% if user_data['english_writing'] == 'weak' %} selected {% endif %}>ضعیف</option>
+                        <option value="medium" {% if user_data['english_writing'] == 'medium' %} selected {% endif %}>متوسط</option>
+                        <option value="good" {% if user_data['english_writing'] == 'good' %} selected {% endif %}>خوب</option>
+                        <option value="excellent" {% if user_data['english_writing'] == 'excellent' %} selected {% endif %}>عالی</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="speaking">مکالمه:</label>
+                    <select id="speaking" name="english_speaking">
+                        <option value="weak" {% if user_data['english_speaking'] == 'weak' %} selected {% endif %}>ضعیف</option>
+                        <option value="medium" {% if user_data['english_speaking'] == 'medium' %} selected {% endif %}>متوسط</option>
+                        <option value="good" {% if user_data['english_speaking'] == 'good' %} selected {% endif %}>خوب</option>
+                        <option value="excellent" {% if user_data['english_speaking'] == 'excellent' %} selected {% endif %}>عالی</option>
+                    </select>
+                </div>
+            
+                <div class="form-group">
+                    <label>آشنایی با کامپیوتر:</label>
+                    <div class="checkbox-container">
+                        <div class="checkbox" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" id="word" name="computer_skills" value="Word">
+                            <label class="checkbox-label" for="word">Word</label>
+                        </div>
+                        <div class="checkbox" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" id="excel" name="computer_skills" value="Excel">
+                            <label class="checkbox-label" for="excel">Excel</label>
+                        </div>
+                        <div class="checkbox" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" id="access" name="computer_skills" value="Access">
+                            <label class="checkbox-label" for="access">Access</label>
+                        </div>
+                        <div class="checkbox" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" id="powerpoint" name="computer_skills" value="PowerPoint">
+                            <label class="checkbox-label" for="powerpoint">PowerPoint</label>
+                        </div>
+                        <div class="checkbox" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" id="photoshop" name="computer_skills" value="Photoshop">
+                            <label class="checkbox-label" for="photoshop">Photoshop</label>
+                        </div>
+                        <div class="checkbox" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" id="python" name="computer_skills" value="Python">
+                            <label class="checkbox-label" for="python">Python</label>
+                        </div>
+                        <div class="checkbox" onclick="toggleCheckbox(this)">
+                            <input type="checkbox" id="other" name="computer_skills" value="Other">
+                            <label class="checkbox-label" for="other">سایر</label>
+                        </div>
+                    </div>
+                </div>
+                
+            
+                <div class="button-container">
+                    <button type="button" onclick="prevPage(7)"><span class="arrow">❮</span> قبلی</button>
+                    <button type="button" onclick="nextPage(7)">بعدی <span class="arrow">❯</span></button>
+                </div>
+            </div>
+            
+            <div class="page" id="page8">
+                <h2>7- ذکر مدارک تخصصی، گواهینامه دوره‌های فنی و حرفه‌ای</h2>
+                <div class="table-container">
+                    <h2>مدارک تخصصی</h2>
+                    <div id="specialtyFields">
+                        <div class="form-group">
+                            <input type="text" name="specialty" placeholder="تایپ کنید" value="{{ user_data['specialty'] }}">
+                            <span class="add-row" onclick="addField('specialtyFields')">&#10133;</span>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="button-container">
+                    <button type="button" onclick="prevPage(8)"><span class="arrow">❮</span> قبلی</button>
+                    <button type="button" onclick="nextPage(8)">بعدی <span class="arrow">❯</span></button>
+                </div>
+            </div>
+            
+            <div class="page" id="page9">
+                <h2>8- تمایل به همکاری به صورت:</h2>
+                <div class="checkbox-container">
+                    <div class="checkbox" onclick="selectWorkPreference(this)">
+                        <input type="radio" id="fullTime" name="workPreference" value="fullTime">
+                        <label class="checkbox-label" for="fullTime">تمام وقت</label>
+                    </div>
+                    <div class="checkbox" onclick="selectWorkPreference(this)">
+                        <input type="radio" id="remote" name="workPreference" value="remote">
+                        <label class="checkbox-label" for="remote">دور کاری</label>
+                    </div>
+                    <div class="checkbox" onclick="selectWorkPreference(this)">
+                        <input type="radio" id="partTime" name="workPreference" value="partTime">
+                        <label class="checkbox-label" for="partTime">پاره وقت</label>
+                    </div>
+                </div>
+                <div class="input-other" id="otherInput" style="display: none;">
+                    <textarea name="part_time_details" placeholder="ساعات و روزهای همکاری را اعلام فرمایید." class="custom-textarea"></textarea>
+                </div>
+            
+            
+                <div class="button-container">
+                    <button type="button" onclick="prevPage(9)"><span class="arrow">❮</span> قبلی</button>
+                    <button type="button" onclick="nextPage(9)">بعدی <span class="arrow">❯</span></button>
+                </div>
+            </div>
+            
+        
+            <div class="page" id="page10">
+                <h2>9- شغل مورد درخواست</h2>
+                <div class="table-container">
+                    <div id="requestedJobFields">
+                        <div class="form-group">
+                            <input type="text" name="requested_job" placeholder="تایپ کنید" value="{{ user_data['requested_job'] }}">
+                            <span class="add-row" onclick="addField('requestedJobFields')">&#10133;</span>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="button-container">
+                    <button type="button" onclick="prevPage(10)"><span class="arrow">❮</span> قبلی</button>
+                    <button type="button" onclick="nextPage(10)">بعدی <span class="arrow">❯</span></button>
+                </div>
+            </div>
+            
+            <div class="page" id="page11">
+                <h2>10- آیا دارای سابقه پرداخت حق بیمه هستید؟</h2>
+                <div class="form-group">
+                    <label for="insuranceStatus">وضعیت بیمه:</label>
+                    <select id="insuranceStatus" name="insurance_status">
+                        <option value="no" {% if user_data['insurance_status'] == 'no' %} selected {% endif %}>خیر</option>
+                        <option value="yes" {% if user_data['insurance_status'] == 'yes' %} selected {% endif %}>بله</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="insuranceDetails">جزئیات بیمه:</label>
+                    <textarea id="insuranceDetails" name="insurance_details" placeholder="در صورت مثبت بودن، چند سال سابقه دارید و شماره بیمه شما چیست؟">{{ user_data['insurance_details'] }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="referralSource">11- نحوه آشنایی با سامانه کاریابی:</label>
+                    <textarea id="referralSource" name="referral_source" placeholder="وارد کنید">{{ user_data['referral_source'] }}</textarea>
+                </div>
+                
+                <div class="button-container">
+                    <button type="button" onclick="prevPage(11)"><span class="arrow">❮</span> قبلی</button>
+                    <button type="button" onclick="nextPage(11)">بعدی <span class="arrow">❯</span></button>
+                </div>
+            </div>
+            
+            <div class="page" id="page12">
+                <h3>12- آیا سیگار می‌کشید؟</h3>
+                <div class="form-group">
+                    <label for="smokingStatus">وضعیت سیگار:</label>
+                    <select id="smokingStatus" name="smoking_status">
+                        <option value="no" {% if user_data['smoking_status'] == 'no' %} selected {% endif %}>خیر</option>
+                        <option value="yes" {% if user_data['smoking_status'] == 'yes' %} selected {% endif %}>بله</option>
+                    </select>
+                </div>
+                
+                <div class="table-container">
+                    <h2>13- دو نفر از کسانی که می‌توانند ضامن شما باشند را ذکر کنید.</h2>
+                    <table id="contactTable">
+                        <thead>
+                            <tr>
+                                <th>ردیف</th>
+                                <th>نام و نام خانوادگی</th>
+                                <th>نسبت</th>
+                                <th>شغل</th>
+                                <th>نشانی و محل کار</th>
+                                <th>تلفن</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><input type="text" name="guarantor_1_name" placeholder="نام و نام خانوادگی" value="{{ user_data['guarantor_1_name'] }}"></td>
+                                <td><input type="text" name="guarantor_1_relation" placeholder="نسبت" value="{{ user_data['guarantor_1_relation'] }}"></td>
+                                <td><input type="text" name="guarantor_1_job" placeholder="شغل" value="{{ user_data['guarantor_1_job'] }}"></td>
+                                <td><input type="text" name="guarantor_1_address" placeholder="نشانی و محل کار" value="{{ user_data['guarantor_1_address'] }}"></td>
+                                <td><input type="text" name="guarantor_1_phone" placeholder="تلفن" value="{{ user_data['guarantor_1_phone'] }}"></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><input type="text" name="guarantor_2_name" placeholder="نام و نام خانوادگی" value="{{ user_data['guarantor_2_name'] }}"></td>
+                                <td><input type="text" name="guarantor_2_relation" placeholder="نسبت" value="{{ user_data['guarantor_2_relation'] }}"></td>
+                                <td><input type="text" name="guarantor_2_job" placeholder="شغل" value="{{ user_data['guarantor_2_job'] }}"></td>
+                                <td><input type="text" name="guarantor_2_address" placeholder="نشانی و محل کار" value="{{ user_data['guarantor_2_address'] }}"></td>
+                                <td><input type="text" name="guarantor_2_phone" placeholder="تلفن" value="{{ user_data['guarantor_2_phone'] }}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            
+                <div class="button-container">
+                    <button type="button" onclick="prevPage(12)"><span class="arrow">❮</span> قبلی</button>
+                    <button type="button" onclick="nextPage(12)">بعدی <span class="arrow">❯</span></button>
+                </div>
+            </div>
+            
+            <div class="page" id="page13">
+                <h2>در کدام محدوده می‌توانید کار کنید؟</h2>
+    <div class="checkbox-container">
+        <div class="checkbox" onclick="selectWorkArea(this)">
+            <input type="radio" id="myCity" name="workArea" value="myCity">
+            <label class="checkbox-label" for="myCity">شهر خودم</label>
+        </div>
+        <div class="checkbox" onclick="selectWorkArea(this)">
+            <input type="radio" id="myCityAndProvince" name="workArea" value="myCityAndProvince">
+            <label class="checkbox-label" for="myCityAndProvince">شهر و استان خودم</label>
+        </div>
+        <div class="checkbox" onclick="selectWorkArea(this)">
+            <input type="radio" id="anyPoint" name="workArea" value="anyPoint">
+            <label class="checkbox-label" for="anyPoint">فرقی ندارد-هر نقطه ای از کشور</label>
+        </div>
+        <div class="checkbox" onclick="selectWorkArea(this)">
+            <input type="radio" id="preferredCity" name="workArea" value="preferredCity">
+            <label class="checkbox-label" for="preferredCity">شهر دلخواه</label>
+        </div>
+    </div>
+    <div class="input-other" id="preferredCityInput" style="display: none;">
+        <input type="text" placeholder="لطفا نام شهر دلخواه را وارد کنید." id="preferredCityField">
+    </div>
+            
+                <div class="button-container">
+                    <button type="button" onclick="prevPage(13)"><span class="arrow">❮</span> قبلی</button>
+                    <button type="button" onclick="nextPage(13)">بعدی <span class="arrow">❯</span></button>
+                </div>
+            </div>
+            
+            <div class="page" id="page14">
+                <h2>اطلاعات نهایی</h2>
+                <div class="form-group">
+                    <div class="commitment-box" id="commitmentBox">
+                        <input type="checkbox" id="commitmentCheckbox" onclick="toggleCommitment()" required>
+                        <label for="commitmentCheckbox">من تعهد می‌کنم که اطلاعات وارد شده صحیح و کامل است.</label>
+                    </div>
+                    <div class="captcha-container" id="captchaContainer" style="display: none;">
+                        <div class="g-recaptcha" data-sitekey="{{ site_key }}"></div>
+                    </div>
+                    <div class="button-container">
+                        <button type="button" onclick="prevPage(14)"><span class="arrow">❮</span> قبلی</button>
+                        <button type="submit">ثبت اطلاعات</button>
+                    </div>
+                </div>
+            </div>
+
+            </form>
+    
+            <div id="اطلاعات شما با موفقیت برای ما ارسال شد"></div> <!-- برای نمایش پیام‌های خطا یا موفقیت -->
+            
+            <script>
+                let currentPage = 0;
+        const totalPages = 16; // تعداد کل مراحل
+        const formData = {};
+
+        function updateProgress() {
+            const currentStepText = document.getElementById('currentStep');
+            const percentage = ((currentPage + 1) / totalPages) * 100;
+            currentStepText.textContent = `مرحله ${currentPage + 1} از ${totalPages} (${Math.round(percentage)}%)`;
+        }
+
+        function nextPage() {
+            const inputs = document.querySelectorAll('.page.active input, .page.active select, .page.active textarea');
+            inputs.forEach(input => {
+                if (input.name) {
+                    formData[input.name] = input.value;
+                }
+            });
+
+            document.querySelectorAll('.page')[currentPage].classList.remove('active');
+            currentPage++;
+            document.querySelectorAll('.page')[currentPage].classList.add('active');
+            updateProgress();
+        }
+
+        function prevPage() {
+            document.querySelectorAll('.page')[currentPage].classList.remove('active');
+            currentPage--;
+            document.querySelectorAll('.page')[currentPage].classList.add('active');
+            updateProgress();
+        }
+
+        function toggleCommitment() {
+            const checkbox = document.getElementById('commitmentCheckbox');
+            const captchaContainer = document.getElementById('captchaContainer');
+
+            captchaContainer.style.display = checkbox.checked ? 'block' : 'none';
+        }
+
+        document.getElementById('completionForm').onsubmit = async function(event) {
+            event.preventDefault();
+            const messageElement = document.getElementById('message');
+
+            try {
+                const response = await fetch('/completion', {
+                    method: 'POST',
+                    body: new FormData(this),
+                });
+
+                const result = await response.json();
+                messageElement.textContent = result.message;
+
+                if (!response.ok) {
+                    messageElement.style.color = 'red';
+                } else {
+                    messageElement.style.color = 'green';
+                    this.reset(); // Reset the form after successful submission
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                messageElement.textContent = "مشکلی در ثبت اطلاعات به وجود آمد.";
+                messageElement.style.color = 'red';
+            }
+        };
+        updateProgress();
+
+            
+                document.addEventListener('DOMContentLoaded', function () {
+                    // تابع برای تغییر وضعیت چک باکس
+                    window.toggleCheckbox = function(element) {
+                        const checkbox = element.querySelector('input[type="checkbox"]');
+                        checkbox.checked = !checkbox.checked;
+                        element.classList.toggle('selected', checkbox.checked);
+                    };
+                });
+            
+                function selectWorkPreference(option) {
+                    const radios = document.querySelectorAll('input[name="workPreference"]');
+                    
+                    // Reset styles
+                    radios.forEach((radio) => {
+                        const checkboxDiv = radio.parentElement;
+                        checkboxDiv.style.border = ''; // Reset border to default
+                        document.getElementById('otherInput').style.border = ''; // Reset border for textarea
+                    });
+                    
+                    // Mark the selected option
+                    const selectedRadio = option.querySelector('input');
+                    selectedRadio.checked = true; // Set this radio as checked
+                    option.style.border = '2px solid green'; // Change border for selected
+                    
+                    // Show or hide other input
+                    const otherInput = document.getElementById('otherInput');
+                    otherInput.style.display = selectedRadio.value === 'partTime' ? 'block' : 'none';
+                    if (selectedRadio.value === 'partTime') {
+                        otherInput.style.border = '2px solid lightgreen'; // Set border for textarea
+                    }
+                }
+                
+                function selectWorkArea(element) {
+                    const checkboxes = document.querySelectorAll('input[name="workArea"]');
+                    const preferredCityInput = document.getElementById('preferredCityInput');
+                    const preferredCityField = document.getElementById('preferredCityField');
+                
+                    // Remove active state from all options
+                    checkboxes.forEach(checkbox => {
+                        const checkboxDiv = checkbox.parentElement;
+                        checkboxDiv.style.border = ''; // Reset border to default
+                        checkbox.checked = false; // Disable radios
+                        preferredCityField.style.border = ''; // Reset border for input
+                    });
+                
+                    // Add active state to the selected option
+                    element.querySelector('input[type="radio"]').checked = true; // Mark this radio as checked
+                    element.style.border = '2px solid green'; // Change border for selected
+                
+                    // Show or hide the input field based on selection
+                    if (element.querySelector('input[type="radio"]').value === 'preferredCity') {
+                        preferredCityInput.style.display = 'block'; // Show field
+                        preferredCityField.style.border = '2px solid lightgreen'; // Set border for input
+                    } else {
+                        preferredCityInput.style.display = 'none'; // Hide field
+                    }
+                }
+                
+                document.querySelectorAll('input[type="text"]').forEach(input => {
+                    input.addEventListener('focus', function() {
+                        this.classList.add('input-focus'); // افزودن کلاس در حالت فوکوس
+                    });
+                
+                    input.addEventListener('blur', function() {
+                        this.classList.remove('input-focus'); // حذف کلاس زمانی که فوکوس را از دست می‌دهد
+                    });
+                });
+                
+                function addField(containerId) {
+                    const container = document.getElementById(containerId);
+                    const fieldCount = container.getElementsByClassName('form-group').length;
+                    
+                    if (fieldCount < 3) {
+                        const newField = document.createElement('div');
+                        newField.className = 'form-group';
+                        newField.innerHTML = `
+                            <input type="text" name="${containerId}" placeholder="تایپ کنید">
+                            <span class="remove-row" onclick="removeField(this, '${containerId}')">&#10134;</span>
+                        `;
+                        container.appendChild(newField);
+                    }
+                    
+                    updateAddButton(containerId);
+                }
+                
+                function removeField(button, containerId) {
+                    const fieldGroup = button.parentNode;
+                    fieldGroup.parentNode.removeChild(fieldGroup);
+                    updateAddButton(containerId);
+                }
+                
+                function updateAddButton(containerId) {
+                    const container = document.getElementById(containerId);
+                    const fieldCount = container.getElementsByClassName('form-group').length;
+                    const addButtons = container.getElementsByClassName('add-row');
+                    
+                    for (let i = 0; i < addButtons.length; i++) {
+                        addButtons[i].style.display = fieldCount < 3 ? 'inline-flex' : 'none';
+                    }
+                }
+                updateProgress();
+            </script>
+            
+            
+</div>
+</body>
+</html>

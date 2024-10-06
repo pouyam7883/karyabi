@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود | ثبت نام کارجویان</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .auth-box {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 100px auto;
+            border: 1px solid #ccc;
+        }
+        .auth-box h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #577884;
+        }
+        .auth-box input {
+            width: calc(100% - 40px);
+            padding: 15px;
+            margin-bottom: 10px; /* فاصله کمتر */
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        .auth-box input:focus {
+            border-color: #6f42c1;
+            outline: none;
+        }
+        .auth-box button {
+            width: 100%;
+            padding: 20px;
+            border: none;
+            border-radius: 20px;
+            background-color: #9655e2;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: background-color 0.3s;
+        }
+        .auth-box button:hover {
+            background-color: #6f42c1;
+        }
+        .error-message {ش
+            color: #e74c3c;
+            font-size: 12px;
+            margin: 10px 0;
+        }
+        .timer {
+            font-size: 12px;
+            color: red; /* رنگ تایمر قرمز */
+        }
+        .resend-button {
+            background: none;
+            border: none;
+            color: #6f42c1;
+            font-size: 14px;
+            cursor: pointer;
+            display: none; /* مخفی به طور پیش‌فرض */
+        }
+        .change-phone {
+            font-size: 12px;
+            color: black;
+            cursor: pointer;
+            margin-bottom: 10px; /* فاصله کمتر */
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-box">
+        <h1>ورود | ثبت نام کارجویان</h1>
+        <form id="authForm" method="post">
+            <div id="phoneSection">
+                <input type="text" name="phone" id="phone" placeholder="شماره همراه" required>
+                <button type="button" id="continueButton">ادامه</button>
+            </div>
+            <div id="verificationSection" style="display:none;">
+                <input type="text" id="phoneDisplay" readonly>
+                <p class="change-phone" id="changePhone">تغییر شماره همراه</p> <!-- به بالا منتقل شد -->
+                <input type="text" name="code" id="code" placeholder="کد تایید" required>
+                <button type="submit" id="verifyButton">تایید</button>
+                <div class="error-message" id="errorMessage"></div>
+                <div class="timer" id="timer">120 ثانیه</div>
+                <button type="button" class="resend-button" id="resendCode">ارسال مجدد کد تایید</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const phoneSection = document.getElementById('phoneSection');
+        const verificationSection = document.getElementById('verificationSection');
+        const phoneInput = document.getElementById('phone');
+        const phoneDisplay = document.getElementById('phoneDisplay');
+        const continueButton = document.getElementById('continueButton');
+        const changePhone = document.getElementById('changePhone');
+        const authForm = document.getElementById('authForm');
+        const timerElement = document.getElementById('timer');
+        const resendButton = document.getElementById('resendCode');
+        const errorMessage = document.getElementById('errorMessage');
+        let timerInterval;
+        let timeLeft;
+
+        continueButton.addEventListener('click', function() {
+            const phone = phoneInput.value;
+            if (phone) {
+                fetch('/auth', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ phone: phone })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        phoneSection.style.display = 'none';
+                        verificationSection.style.display = 'block';
+                        phoneDisplay.value = phone;
+                        startTimer();
+                    } else {
+                        showError(data.error);
+                    }
+                });
+            }
+        });
+
+        changePhone.addEventListener('click', function() {
+            phoneSection.style.display = 'block';
+            verificationSection.style.display = 'none';
+            clearInterval(timerInterval);
+            timerElement.style.display = 'none';
+            resendButton.style.display = 'none';
+        });
+
+        function updateTimer() {
+            timerElement.textContent = `${timeLeft} ثانیه`;
+            timeLeft--;
+
+            if (timeLeft < 0) {
+                clearInterval(timerInterval);
+                timerElement.style.display = 'none';
+                resendButton.style.display = 'inline';
+            }
+        }
+
+        function startTimer() {
+            timeLeft = 120;
+            timerElement.style.display = 'inline';
+            resendButton.style.display = 'none';
+            clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        resendButton.addEventListener('click', function() {
+            fetch('/auth', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ phone: phoneDisplay.value, resend: true })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    startTimer();
+                    errorMessage.style.display = 'none';
+                } else {
+                    showError(data.error);
+                }
+            });
+        });
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'inline';
+        }
+
+        authForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const code = document.getElementById('code').value;
+            fetch('/auth', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ phone: phoneDisplay.value, code: code })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = data.redirect;
+                } else {
+                    showError(data.error);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تماس با ما</title>
+    <style>
+        /* Resetting some default styles */
+        body, h1, h2, p {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Vazir', sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .contact-card {
+            background: white;
+            border-radius: 15px;
+            border: 4px solid #658c9a; /* رنگ حاشیه جدید */
+            padding: 30px; /* افزایش اندازه حاشیه */
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* سایه سه‌بعدی */
+            text-align: right; /* راست‌چین کردن محتوا */
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-card::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: -12px;
+            width: calc(100% + 24px);
+            height: calc(100% + 24px);
+            border-radius: 15px;
+            border: 4px solid #658c9a; /* رنگ حاشیه جدید */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: -1;
+        }
+
+        .contact-card h2 {
+            color: #6f42c1;
+            font-size: 28px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-align: right; /* راست‌چین کردن عنوان */
+        }
+
+        .contact-info {
+            margin-bottom: 20px;
+        }
+
+        .contact-info p {
+            font-size: 16px;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .contact-info p strong {
+            display: block; /* تغییر به بلوک برای راست‌چین کردن */
+            font-size: 18px;
+            color: #658c9a; /* رنگ عناوین */
+            text-align: right;
+        }
+
+        .contact-info p span {
+            display: block;
+            text-align: center; /* وسط‌چین کردن متن */
+        }
+
+        .social-links {
+            margin-top: 20px;
+            text-align: center; /* وسط‌چین کردن لینک‌های اجتماعی */
+        }
+
+        .social-links a {
+            display: block;
+            font-size: 16px;
+            color: #6f42c1;
+            text-decoration: none;
+            margin: 5px 0;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: #5a2e91;
+        }
+
+        .rainbow-text {
+            font-size: 16px;
+            margin: 20px 0;
+            color: #658c9a; /* رنگ متن */
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="contact-card">
+            <h2>تماس با ما</h2>
+            <div class="contact-info">
+                <p><strong>ایمیل پشتیبانی:</strong> <span>support@example.com</span></p>
+                <p><strong>شماره تماس:</strong> <span>+98 912 345 6789</span></p>
+                <p><strong>شبکه‌های اجتماعی:</strong></p>
+            </div>
+            <div class="social-links">
+                <a href="https://t.me/Pouyarsn" target="_blank">کانال تلگرام</a>
+                <a href="https://eitaa.com/Pouyarsn" target="_blank">کانال ایتا</a>
+            </div>
+            <p class="rainbow-text">سوالی دارید یا با مشکلی رو به رو شده‌اید؟ خوشحال می‌شویم با ما تماس بگیرید. ما هر روز هفته، 24 ساعته به همه‌ی تلفن‌ها پاسخ می‌دهیم. به ایمیل‌ها معمولا ظرف چهار ساعت، و در موارد استثنایی، حداکثر یک روز کاری، رسیدگی می‌شود.</p>
+        </div>
+    </div>
+</body>
+</html>

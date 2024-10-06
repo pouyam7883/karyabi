@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>داشبورد</title>
+    <style>
+        /* Resetting some default styles */
+        body, h1, h2, h3, p {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Vazir', sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #fff;
+            color: #333;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+
+        .logo img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .completion-button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, box-shadow 0.3s;
+            margin-right: 20px;
+        }
+
+        .completion-button:hover {
+            background-color: #218838;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            position: relative; /* Required for positioning dropdown menu */
+        }
+
+        .menu-toggle {
+            cursor: pointer;
+            font-size: 20px;
+            color: #6f42c1; /* Purple color */
+            margin-left: 10px;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            z-index: 1000;
+            min-width: 200px;
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f0f0f0;
+        }
+
+        .menu-toggle.active ~ .dropdown-menu {
+            display: block;
+        }
+
+        .user-info {
+            color: #658c9a;
+            font-size: 16px;
+        }
+
+        main {
+            padding-top: 80px;
+        }
+
+        .main-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            width: 80%;
+        }
+
+        .info-box {
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .info-box p {
+            font-size: 16px;
+            line-height: 1.6;
+            text-align: right;
+        }
+
+        .search-job-button {
+            display: block;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            padding: 15px 30px;
+            font-size: 18px;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            margin: 20px auto 0;
+            max-width: 200px;
+        }
+
+        .search-job-button:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            background-color: #fff;
+            border-top: 1px solid #ddd;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-menu {
+            display: flex;
+            justify-content: space-between;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section {
+            flex: 1;
+            margin: 0 10px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: right;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 10px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section ul li {
+            margin: 5px 0;
+        }
+
+        .footer-section a {
+            color: #333;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: #6f42c1;
+        }
+
+        .copyright {
+            font-size: 14px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="header-right">
+                <span class="menu-toggle" onclick="toggleMenu()">☰</span>
+                <div class="dropdown-menu">
+                    <a href="{{ url_for('profile') }}">اطلاعات کاربری</a>
+                    <a href="{{ url_for('reset_password') }}">تغییر رمز عبور</a>
+                    <a href="{{ url_for('logout') }}">خروج از سامانه</a>
+                </div>
+                <div class="user-info" id="user-name">{{ user_name }}</div>
+            </div>
+            <div class="header-left">
+                <a href="{{ url_for('completion') }}" class="completion-button">تکمیل اطلاعات</a>
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='logo.png') }}" alt="لوگو">
+                    <h1>سامانه جامع و یکپارچه کاریابی</h1>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="main-content">
+            <div class="info-box">
+                <p>این بخش برای قرار دادن متن طراحی شده است. شما می‌توانید اینجا متنی که می‌خواهید به نمایش بگذارید را قرار دهید. اینجا چند خط متن پیش فرض قرار دارد تا به شما کمک کند تا طرح را بررسی کنید و تغییرات لازم را اعمال کنید.</p>
+                <p>متن پیش فرض ۱: لطفاً متن مورد نظر خود را وارد کنید.</p>
+                <p>متن پیش فرض ۲: متن نمونه برای نمایش در کادر.</p>
+                <p>متن پیش فرض ۳: اینجا می‌توانید توضیحات بیشتری بنویسید.</p>
+                <p>متن پیش فرض ۴: نمونه دیگری از متن برای بررسی.</p>
+                <p>متن پیش فرض ۵: اضافه کردن متن و بررسی طراحی.</p>
+                <p>متن پیش فرض ۶: ادامه دادن با متن نمونه.</p>
+                <p>متن پیش فرض ۷: توجه به طراحی و محتوای کادر.</p>
+                <p>متن پیش فرض ۸: اینجا نیز می‌توانید متنی اضافه کنید.</p>
+                <p>متن پیش فرض ۹: پیش‌نمایش متن در کادر رنگی.</p>
+                <p>متن پیش فرض ۱۰: پایان متن پیش‌فرض.</p>
+                <a href="{{ url_for('search_job') }}" class="search-job-button">جستجوی شغل</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-menu">
+            <div class="footer-section">
+                <h3>درباره ما</h3>
+                <ul>
+                    <li><a href="#">درباره ما</a></li>
+                    <li><a href="#">تماس با ما</a></li>
+                    <li><a href="#">خدمات ما</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>خدمات</h3>
+                <ul>
+                    <li><a href="#">جستجوی شغل</a></li>
+                    <li><a href="#">راهنمای استخدام</a></li>
+                    <li><a href="#">آموزش و مشاوره</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>قوانین و مقررات</h3>
+                <ul>
+                    <li><a href="#">حریم خصوصی</a></li>
+                    <li><a href="#">شرایط استفاده</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2024 سامانه جامع و یکپارچه کاریابی. تمامی حقوق محفوظ است.
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const toggle = document.querySelector('.menu-toggle');
+            toggle.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

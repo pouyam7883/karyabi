@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود به داشبورد</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif; /* استفاده از فونت فارسی */
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .login-box {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 20px; /* گرد کردن گوشه‌ها */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 100px auto; /* فاصله از بالا */
+            border: 1px solid #ccc; /* رنگ حاشیه */
+        }
+        .login-box h2 {
+            margin-bottom: 20px;
+            font-size: 24px; /* اندازه فونت عنوان */
+            color: #577884; /* رنگ عنوان */
+        }
+        .login-box input {
+            width: calc(100% - 40px); /* عرض فیلد ورودی کمی کمتر از 100% */
+            padding: 15px; /* padding */
+            margin-bottom: 20px; /* فاصله زیر فیلد */
+            border: 1px solid #ccc; /* رنگ حاشیه */
+            border-radius: 20px; /* گرد کردن گوشه‌ها */
+            font-size: 16px; /* اندازه فونت */
+            transition: border-color 0.3s; /* انیمیشن */
+        }
+        .login-box input:focus {
+            border-color: #6f42c1; /* رنگ حاشیه در حالت فوکوس */
+            outline: none;
+        }
+        .login-box button {
+            width: 100%;
+            padding: 20px; /* padding */
+            border: none;
+            border-radius: 20px; /* گرد کردن گوشه‌ها */
+            background-color: #9655e2; /* رنگ دکمه */
+            color: white;
+            font-size: 20px; /* اندازه فونت بزرگتر */
+            font-weight: bold; /* بولد کردن */
+            cursor: pointer;
+            position: relative; /* برای حاشیه زیر */
+            margin-bottom: 10px; /* فاصله زیر دکمه */
+            transition: background-color 0.3s; /* انیمیشن تغییر رنگ */
+        }
+
+
+        .login-box button:hover {
+            background-color: #6f42c1; /* رنگ دکمه در حالت هاور */
+        }
+        .login-box button:hover::after {
+            content: ''; /* ایجاد حاشیه پرتویی */
+            position: absolute; 
+            left: 0; 
+            right: 0; 
+            bottom: -1px; /* فاصله از دکمه */
+            height: 2px; /* ضخامت حاشیه */
+            background-color: rgba(224, 176, 255, 0.6); /* رنگ حاشیه پرتویی */
+            border-radius: 10px; /* گرد کردن حاشیه پرتویی */
+            transition: height 0.3s ease; /* انیمیشن */
+        }
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin: 10px 0;
+        }
+        .forgot-password {
+            display: {{ 'block' if forgot_password else 'none' }};
+            margin-top: 10px;
+            color: #4a90e2;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+        .employer-link {
+            display: block;
+            margin-top: 20px;
+            color: #6f42c1; /* بنفش */
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .employer-link:hover {
+            text-decoration: underline;
+        }
+        .input-error {
+            border-color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h2>ورود به داشبورد</h2>
+        <form method="post" action="{{ url_for('login') }}">
+            <input type="text" name="national_code" placeholder="کد کاربری" required>
+            <input type="password" name="password" placeholder="رمز عبور" required>
+            <button type="submit">ورود</button>
+            <div id="error-message" class="error-message">
+                {% if error_message %}
+                    {{ error_message }}
+                {% endif %}
+            </div>
+            <a href="/reset_password" class="reset_password">فراموشی رمز عبور</a>
+        </form>
+        
+        <a href="/employer" class="employer-link">بخش کارفرمایان</a>
+    </div>
+</body>
+</html>
