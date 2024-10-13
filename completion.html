@@ -479,7 +479,7 @@
             <!-- Page 1 -->
             <div class="page active" id="page1">
                 <h2>1- اطلاعات شخصی</h2>
-                <h4>1- Personal Information</h4>
+                <h4>(Personal Information)</h4>
                 <div class="form-group">
                     <label for="gender">جنسیت:</label>
                     <select id="gender" name="gender">
@@ -514,7 +514,7 @@
         
             <div class="page" id="page2">
                 <h2>2- اطلاعات شناسایی</h2>
-                <h4>2- Identification Information</h4>
+                <h4>(Identification Information)</h4>
                 <div class="form-group">
                     <label for="NationalCode">کد ملی:</label>
                     <input type="text" id="NationalCode" name="national_code" value="{{ user_data['national_code'] }}" placeholder="کد ملی خود را وارد کنید" readonly>
@@ -553,7 +553,7 @@
             
             <div class="page" id="page3">
                 <h2>2/2- اطلاعات شناسایی</h2>
-                <h4>2/2- Identification Information</h4>
+                <h4>(Identification Information)</h4>
             
                <div class="form-group">
     <label for="maritalStatus">وضعیت تاهل:</label>
@@ -589,7 +589,7 @@
             
             <div class="page" id="page4">
                 <h2>3- خدمت نظام وظیفه</h2>
-                <h4>3- Military Service</h4>
+                <h4>(Military Service)</h4>
                 <div class="form-group">
     <label for="militaryStatus">وضعیت خدمت:</label>
     <select id="militaryStatus" name="military_status" onchange="toggleExemptionField()">
@@ -614,7 +614,7 @@
             
             <div class="page" id="page5">
                 <h2>4- سوابق تحصیلی و آموزشی</h2>
-                <h4>4- Educational Background</h4>
+                <h4>(Educational Background)</h4>
                 <div class="form-group">
                     <label for="LastDegree">آخرین مدرک تحصیلی:</label>
                     <input type="text" id="LastDegree" name="last_degree" value="{{ user_data['last_degree'] }}" placeholder="آخرین مدرک تحصیلی خود را وارد کنید">
@@ -655,7 +655,7 @@
             
             <div class="page" id="page6">
                 <h2>5- تجربیات شغلی</h2>
-                <h4>5- Work Experience</h4>
+                <h4>(Work Experience)</h4>
                 <div class="form-group">
                     <label for="OrganizationName">نام سازمان یا شرکت:</label>
                     <input type="text" id="OrganizationName" name="organization_name" value="{{ user_data['organization_name'] }}" placeholder="وارد کنید">
@@ -692,7 +692,7 @@
             
             <div class="page" id="page7">
                 <h2>6- آشنایی به زبان‌های خارجی و کامپیوتر:</h2>
-                <h4>Language Proficiency and Computer Skills</h4>
+                <h4>(Language Proficiency and Computer Skills)</h4>
                 <h3>وضعیت/زبان انگلیسی</h3>
                 <div class="form-group">
                     <label for="reading">خواندن:</label>
@@ -767,7 +767,7 @@
             <div class="page" id="page8">
                 <h2>7- ذکر مدارک تخصصی، گواهینامه دوره‌های فنی و حرفه‌ای</h2>
                 <div class="table-container">
-                    <h2>مدارک تخصصی</h2>
+                    <h2>(specialtyFields)</h2>
                     <div id="specialtyFields">
                         <div class="form-group">
                             <input type="text" name="specialty" placeholder="تایپ کنید" value="{{ user_data['specialty'] }}">
@@ -784,6 +784,7 @@
             
             <div class="page" id="page9">
                 <h2>8- تمایل به همکاری به صورت:</h2>
+                <h4>(Cooperation in the format)</h4>
                 <div class="checkbox-container">
                     <div class="checkbox" onclick="selectWorkPreference(this)">
                         <input type="radio" id="fullTime" name="workPreference" value="fullTime">
@@ -812,6 +813,7 @@
         
             <div class="page" id="page10">
                 <h2>9- شغل مورد درخواست</h2>
+                <h4>(Job requested)</h4>
                 <div class="table-container">
                     <div id="requestedJobFields">
                         <div class="form-group">
@@ -829,6 +831,7 @@
             
             <div class="page" id="page11">
                 <h2>10- آیا دارای سابقه پرداخت حق بیمه هستید؟</h2>
+                <h4>(Do you have a history of paying insurance premiums?)</h4>
                 <div class="form-group">
                     <label for="insuranceStatus">وضعیت بیمه:</label>
                     <select id="insuranceStatus" name="insurance_status">
@@ -853,6 +856,7 @@
             
             <div class="page" id="page12">
                 <h3>12- آیا سیگار می‌کشید؟</h3>
+                <h4>(Do you smoke?)</h4>
                 <div class="form-group">
                     <label for="smokingStatus">وضعیت سیگار:</label>
                     <select id="smokingStatus" name="smoking_status">
@@ -863,6 +867,7 @@
                 
                 <div class="table-container">
                     <h2>13- دو نفر از کسانی که می‌توانند ضامن شما باشند را ذکر کنید.</h2>
+                    <h4>(Name two people who can be your guarantor.)</h4>
                     <table id="contactTable">
                         <thead>
                             <tr>
@@ -903,6 +908,7 @@
             
             <div class="page" id="page13">
                 <h2>در کدام محدوده می‌توانید کار کنید؟</h2>
+                <h4>(In which range can you work?)</h4>
     <div class="checkbox-container">
         <div class="checkbox" onclick="selectWorkArea(this)">
             <input type="radio" id="myCity" name="workArea" value="myCity">
@@ -955,7 +961,7 @@
             
             <script>
                 let currentPage = 0;
-        const totalPages = 16; // تعداد کل مراحل
+        const totalPages = 14; // تعداد کل مراحل
         const formData = {};
 
         function updateProgress() {
