@@ -423,7 +423,26 @@
     /* حذف رنگ حاشیه */
 }
 
+ .form-group {
+        margin-bottom: 10px; /* فاصله بین فیلدها */
+    }
 
+    input,
+    select,
+    textarea {
+        width: 100%; /* عرض برابر */
+        box-sizing: border-box; /* شامل حاشیه و پدینگ در اندازه */
+        border-radius: 5px; /* گرد کردن حاشیه */
+        border: 1px solid #ccc; /* حاشیه پیش‌فرض */
+        padding: 8px; /* فضای داخلی */
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+        border: 2px solid green; /* حاشیه سبز هنگام فوکوس */
+        outline: none; /* حذف حاشیه پیش‌فرض */
+    }
             </style>
 </head>
 <body>
@@ -448,13 +467,12 @@
                 <div class="bar-item" id="barItem12"></div>
                 <div class="bar-item" id="barItem13"></div>
                 <div class="bar-item" id="barItem14"></div>
-                <div class="bar-item" id="barItem15"></div>
-                <div class="bar-item" id="barItem16"></div>
+
             </div>
             <div class="progress-bar">
     <div class="progress" id="progress" style="width: 0%;"></div>
 </div>
-            <div id="currentStep" class="current-step">مرحله 1 از 16</div>
+            <div id="currentStep" class="current-step">مرحله 1 از 14</div>
         </div>
         <form id="completionForm" method="POST" action="/completion">
 
@@ -537,31 +555,31 @@
                 <h2>2/2- اطلاعات شناسایی</h2>
                 <h4>2/2- Identification Information</h4>
             
-                <div class="form-group">
-                    <label for="MaritalStatus">وضعیت تاهل:</label>
-                    <select id="MaritalStatus" name="marital_status" onchange="toggleChildren()">
-                        <option value="single" {% if user_data['marital_status'] == 'single' %} selected {% endif %}>مجرد</option>
-                        <option value="married" {% if user_data['marital_status'] == 'married' %} selected {% endif %}>متاهل</option>
-                    </select>
-                </div>
-            
-                <div class="form-group" id="childrenGroup" style="display: {% if user_data['marital_status'] == 'married' %} block {% else %} none {% endif %};">
-                    <label for="ChildrenCount">تعداد فرزندان:</label>
-                    <input type="number" id="ChildrenCount" name="children_count" value="{{ user_data['children_count'] }}" placeholder="تعداد فرزندان را وارد کنید">
-                </div>
-            
-                <div class="form-group">
-                    <label for="HealthStatus">آیا از نظر روحی و جسمانی در سلامت کامل به سر می برید؟</label>
-                    <select id="HealthStatus" name="health_status" onchange="toggleHealthDetails()">
-                        <option value="yes" {% if user_data['health_status'] == 'yes' %} selected {% endif %}>بله</option>
-                        <option value="no" {% if user_data['health_status'] == 'no' %} selected {% endif %}>خیر</option>
-                    </select>
-                </div>
-            
-                <div class="form-group" id="healthDetailGroup" style="display: {% if user_data['health_status'] == 'no' %} block {% else %} none {% endif %};">
-                    <label for="HealthDetails">توضیح دهید:</label>
-                    <textarea id="HealthDetails" name="health_details" placeholder="توضیحات خود را وارد کنید">{{ user_data['health_details'] }}</textarea>
-                </div>
+               <div class="form-group">
+    <label for="maritalStatus">وضعیت تاهل:</label>
+    <select id="maritalStatus" name="marital_status" onchange="toggleChildrenField()">
+        <option value="single" {% if user_data['marital_status'] == 'single' %} selected {% endif %}>مجرد</option>
+        <option value="married" {% if user_data['marital_status'] == 'married' %} selected {% endif %}>متاهل</option>
+    </select>
+</div>
+
+<div id="childrenField" class="conditional-field" style="display: {% if user_data['marital_status'] == 'married' %} block {% else %} none {% endif %};">
+    <label for="childrenCount">تعداد فرزندان:</label>
+    <input type="number" id="childrenCount" name="children_count" min="0" value="{{ user_data['children_count'] }}">
+</div>
+
+<div class="form-group">
+    <label for="healthStatus">آیا از نظر روحی و جسمانی در سلامت کامل به سر می برید؟</label>
+    <select id="healthStatus" name="health_status" onchange="toggleHealthDetail()">
+        <option value="yes" {% if user_data['health_status'] == 'yes' %} selected {% endif %}>بله</option>
+        <option value="no" {% if user_data['health_status'] == 'no' %} selected {% endif %}>خیر</option>
+    </select>
+</div>
+
+<div id="healthDetailField" class="conditional-field" style="display: {% if user_data['health_status'] == 'no' %} block {% else %} none {% endif %};">
+    <label for="healthDetail">توضیح دهید:</label>
+    <textarea id="healthDetail" name="health_detail">{{ user_data['health_detail'] }}</textarea>
+</div>
             
                 <div class="button-container">
                      <button type="button" class="custom-button" onclick="prevPage(currentPage)">قبلی</button>
@@ -573,17 +591,20 @@
                 <h2>3- خدمت نظام وظیفه</h2>
                 <h4>3- Military Service</h4>
                 <div class="form-group">
-                    <label for="ServiceStatus">وضعیت خدمت:</label>
-                    <select id="ServiceStatus" name="service_status">
-                        <option value="completed" {% if user_data['service_status'] == 'completed' %} selected {% endif %}>انجام داده</option>
-                        <option value="exempted" {% if user_data['service_status'] == 'exempted' %} selected {% endif %}>معاف</option>
-                        <option value="deferred" {% if user_data['service_status'] == 'deferred' %} selected {% endif %}>مشمول</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="ExemptionDetails">نوع و علت معافیت:</label>
-                    <textarea id="ExemptionDetails" name="exemption_details" placeholder="نوع و علت معافیت را وارد کنید">{{ user_data['exemption_details'] }}</textarea>
-                </div>
+    <label for="militaryStatus">وضعیت خدمت:</label>
+    <select id="militaryStatus" name="military_status" onchange="toggleExemptionField()">
+        <option value="completed" {% if user_data['service_status'] == 'completed' %} selected {% endif %}>انجام داده</option>
+        <option value="exempted" {% if user_data['service_status'] == 'exempted' %} selected {% endif %}>معاف</option>
+        <option value="deferred" {% if user_data['service_status'] == 'deferred' %} selected {% endif %}>مشمول</option>
+    </select>
+</div>
+
+<div id="exemptionField" style="display: {% if user_data['service_status'] == 'exempted' %} block {% else %} none {% endif %};">
+    <label for="exemptionReason">نوع و علت معافیت:</label>
+    <input type="text" id="exemptionReason" name="exemption_reason" value="{{ user_data['exemption_reason'] }}">
+</div>
+
+
                 <div class="button-container">
                      <button type="button" class="custom-button" onclick="prevPage(currentPage)">قبلی</button>
     <button type="button" class="custom-button" onclick="nextPage(currentPage)">بعدی</button>
@@ -1130,6 +1151,20 @@ function updateProgress() {
         checkboxInput.checked = !checkboxInput.checked; // تغییر وضعیت چک باکس
         element.classList.toggle('selected', checkboxInput.checked); // افزودن یا حذف کلاس انتخاب
     }
+}
+function toggleChildrenField() {
+        const maritalStatus = document.getElementById('maritalStatus').value;
+        document.getElementById('childrenField').style.display = maritalStatus === 'married' ? 'block' : 'none';
+    }
+
+    function toggleHealthDetail() {
+        const healthStatus = document.getElementById('healthStatus').value;
+        document.getElementById('healthDetailField').style.display = healthStatus === 'no' ? 'block' : 'none';
+    }
+
+    function toggleExemptionField() {
+    const militaryStatus = document.getElementById('militaryStatus').value;
+    document.getElementById('exemptionField').style.display = militaryStatus === 'exempted' ? 'block' : 'none';
 }
 
                 updateProgress();
