@@ -1,136 +1,124 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
-import mysql.connector
-import random
-import requests
+''' app.py '''
+#/user/bin/python
+
+# standard imports
 import time
 import os
+
+# Framework imports
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
+
+#local imports
+import helper
+import paths
+import config
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'default_secret_key')
 
 
-    
-
-def get_db_connection():
-    try:
-        connection = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="788303",
-            database="karjoo"
-        )
-        return connection
-    except mysql.connector.Error as e:
-        print(f"Error connecting to database: {e}")
-        return None
-    
-
-    
-    
-    
-def send_verification_code(phone, code):
-    url = "https://api.sms.ir/v1/send/verify"
-    payload = {
-        "mobile": phone,
-        "templateId": 100000,  # Replace with your template ID
-        "parameters": [
-            {"name": "Code", "value": code}
-        ]
-    }
-    headers = {
-        'Content-Type': 'application/json',
-        'x-api-key': os.environ.get('SMS_API_KEY', '9QK0KHwGH2G2scmOdKA8vEyfLG0ClpWGDcvU71UGUvUt8PvcC7buE39aZ1oOmcpe')  # کلید API شما
-    }
-    try:
-        response = requests.post(url, json=payload, headers=headers)
-        response.raise_for_status()
-        result = response.json()
-        print(f"Send result: {result}")  # Log the result for debugging
-        return result['status'] == 1  # بررسی وضعیت
-    except requests.RequestException as e:
-        print(f"Request failed: {e}")
-        return False  # بازگشت False در صورت بروز خطا
-
-
-
-
-
-@app.route('/')
-def index():
+@app.route(paths.MAIN_ROUTE_APP)
+def handle_index():
+    '''this route handle main page'''
     return render_template('index.html')
 
 
-@app.route('/auth', methods=['GET', 'POST'])
-def auth():
+@app.route(paths.AUTH_ROUTE_APP, methods=['GET', 'POST'])
+def handle_auth():
+    '''this route handle auth of user'''
+
     if request.method == 'POST':
         data = request.json
         phone = data.get('phone')
         code = data.get('code')
-        resend = data.get('resend', False)
+
 
         if code:
+
             # Code verification
             code_sent_time = session.get('code_time', 0)
+
             if 'code' in session and code.isdigit():
+
                 if int(code) == session.get('code'):
+
                     if time.time() - code_sent_time <= 120:
-                        conn = get_db_connection()
+
+                        conn, user = helper.read_user_with_phone(phone)
+
                         if conn:
-                            try:
-                                cursor = conn.cursor()
-                                # تغییر نام جدول به register
-                                cursor.execute('SELECT phone FROM register WHERE phone = %s', (phone,))
-                                user = cursor.fetchone()
-                                cursor.close()  # بستن cursor
+
+                            if user:
                                 conn.close()  # بستن اتصال
-                                
-                                if user:
-                                    return jsonify({'success': True, 'redirect': url_for('login')})
-                                else:
-                                    return jsonify({'success': True, 'redirect': url_for('register')})
-                            except mysql.connector.Error as e:
-                                print(f"Database error: {e}")
-                                return jsonify({'success': False, 'error': 'خطای پایگاه داده'})
+                                return jsonify({'success': True, 'redirect': url_for('handle_login')})
+
+                            else:
+                                conn.close()  # بستن اتصال
+                                return jsonify({'success': True, 'redirect': url_for('handle_register')})
+
                         else:
                             return jsonify({'success': False, 'error': 'خطا در اتصال به پایگاه داده'})
+
                     else:
                         return jsonify({'success': False, 'error': 'کد تایید منقضی شده است'})
+
                 else:
                     return jsonify({'success': False, 'error': 'کد تایید نادرست است'})
+
             else:
                 return jsonify({'success': False, 'error': 'کد تایید معتبر نیست. لطفاً دوباره تلاش کنید.'})
+
         elif phone:
+
             # Phone number submission or resend code
-            code = random.randint(1000, 9999)
-            send_verification_code(phone, code)
-            session['phone'] = phone
-            session['code'] = code
-            session['code_time'] = time.time()
-            return jsonify({'success': True})
-        
+            code = helper.generate_random_code()
+
+            if helper.send_verification_code(phone, code):
+
+                session['phone'] = phone
+                session['code'] = code
+                session['code_time'] = time.time()
+
+                return jsonify({'success': True})
+
+            else:
+
+                return jsonify({'success': False})
+
     return render_template('auth.html')
 
 
 
-@app.route('/send_code', methods=['POST'])
-def send_code():
+@app.route(paths.SEND_CODE_ROUTE, methods=['POST'])
+def handle_send_code():
+    '''this function handle send sms for user'''
+
     data = request.get_json()
     phone = data.get('phone')
+
     if phone:
-        code = random.randint(1000, 9999)
-        result = send_verification_code(phone, code)
+
+        code = helper.generate_random_code()
+        result = helper.send_verification_code(phone, code)
+
         if result.get('success'):
+
             session['reset_code'] = code
             session['reset_code_phone'] = phone
             session['code_time'] = time.time()  # Save the time when code was sent
+
             return jsonify({'success': True})
+
     return jsonify({'success': False})
 
 
-@app.route('/reset_password', methods=['GET', 'POST'])
-def reset_password():
+@app.route(paths.RESET_PASS_ROUTE, methods=['GET', 'POST'])
+def handle_reset_password():
+    '''this function handle reset password for user'''
+
     if request.method == 'POST':
+
         data = request.json
         phone = data.get('phone')
         code = data.get('code')
@@ -138,46 +126,52 @@ def reset_password():
         confirm_password = data.get('confirmPassword')
 
         if phone and not code:
+
             # Step 1: Send verification code
-            verification_code = str(random.randint(100000, 999999))
+            verification_code = str(helper.generate_random_code())
             session['reset_code'] = verification_code
             session['reset_code_phone'] = phone
             session['code_time'] = time.time()
 
-            send_result = send_verification_code(phone, verification_code)
+            send_result = helper.send_verification_code(phone, verification_code)
+
             if send_result:
+
                 return jsonify({"success": True, "message": "کد تایید ارسال شد."})
+
             else:
+
                 return jsonify({"success": False, "error": "خطا در ارسال کد تایید."})
 
         elif code and new_password and confirm_password:
+
             # Step 2: Verify code and change password
+
             if new_password != confirm_password:
+
                 return jsonify({"success": False, "error": "رمز عبور و تکرار آن مطابقت ندارند."})
 
             if code != session.get('reset_code'):
+
                 return jsonify({"success": False, "error": "کد تایید نادرست است."})
 
             if time.time() - session.get('code_time', 0) > 120:
+
                 return jsonify({"success": False, "error": "کد تایید منقضی شده است."})
 
             hashed_password = generate_password_hash(new_password)
-            conn = get_db_connection()
-            if conn:
-                try:
-                    cursor = conn.cursor()
-                    cursor.execute("UPDATE register SET password = %s WHERE phone = %s", (hashed_password, session['reset_code_phone']))
-                    conn.commit()
-                    cursor.close()
-                    conn.close()
-                    session.pop('reset_code', None)
-                    session.pop('reset_code_phone', None)
-                    session.pop('code_time', None)
-                    return jsonify({"success": True, "message": "رمز عبور با موفقیت تغییر کرد."})
-                except mysql.connector.Error as e:
-                    print(f"Database error: {e}")
-                    return jsonify({"success": False, "error": "خطا در تغییر رمز عبور."})
+            conn, ok = helper.reset_password_user(hashed_password, session['reset_code_phone'])
+
+            if conn and ok:
+
+                session.pop('reset_code', None)
+                session.pop('reset_code_phone', None)
+                session.pop('code_time', None)
+
+                return jsonify({"success": True, "message": "رمز عبور با موفقیت تغییر کرد."})
+
             else:
+
                 return jsonify({"success": False, "error": "خطا در اتصال به پایگاه داده."})
 
     return render_template('reset_password.html')
@@ -185,269 +179,299 @@ def reset_password():
 
 
 
-@app.route('/resend_reset_code', methods=['POST'])
-def resend_reset_code():
+@app.route(paths.RESEND_RESET_CODE, methods=['POST'])
+def handle_resend_reset_code():
+    '''this function handle resend reset code'''
+
     phone = session.get('reset_code_phone')
+
     if phone:
-        verification_code = str(random.randint(100000, 999999))
+
+        verification_code = str(helper.generate_random_code())
         session['reset_code'] = verification_code
         session['code_time'] = time.time()
 
-        send_result = send_verification_code(phone, verification_code)
+        send_result = helper.send_verification_code(phone, verification_code)
+
         if send_result:
+
             return jsonify({"success": True, "message": "کد تایید مجدداً ارسال شد."})
+
         else:
+
             return jsonify({"success": False, "error": "خطا در ارسال مجدد کد تایید."})
+
     else:
-        return jsonify({"success": False, "error": "شماره تلفن در جلسه ذخیره نشده است."})
+
+        return jsonify({"success": False, "error": "شماره تلفن در session ذخیره نشده است."})
 
 
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
+@app.route(paths.REGISTER_ROUTE, methods=['GET', 'POST'])
+def handle_register():
+    '''this function handle register user'''
+
     if request.method == 'POST':
+
         phone = session.get('phone')
         name = request.form['name']
         lastname = request.form['lastname']
-        fatherName = request.form['fatherName']
-        nationalCode = request.form['nationalCode']
+        father_name = request.form['fatherName']
+        national_code = request.form['nationalCode']
         email = request.form['email']
-        birthPlace = request.form['birthPlace']
-        birthDate = request.form['birthDate']
+        birth_place = request.form['birthPlace']
+        birth_date = request.form['birthDate']
         password = request.form['password']
-        confirmPassword = request.form['confirmPassword']
-        
-        if password != confirmPassword:
+        confirm_password = request.form['confirmPassword']
+
+        if password != confirm_password:
+
             return "رمز عبور و تکرار آن با هم مطابقت ندارند"
-        
+
         hashed_password = generate_password_hash(password)  # Hash the password
 
-        try:
-            conn = get_db_connection()
-            cursor = conn.cursor()
-            # تغییر نام جدول به register
-            cursor.execute('INSERT INTO register (phone, name, last_name, father_name, national_code, email, birth_place, birth_date, password) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)', 
-               (phone, name, lastname, fatherName, nationalCode, email, birthPlace, birthDate, hashed_password))
+        conn, ok = helper.register_user(phone, name, lastname, father_name, national_code, email, birth_place, birth_date, hashed_password)
 
-            conn.commit()
-            cursor.close()  # بستن cursor
+        if conn and ok:
+
+            # success
             conn.close()  # بستن اتصال
-        except mysql.connector.Error as e:
-            print(f"Database error: {e}")
-            return "خطای پایگاه داده"
-        
-        # ذخیره کد ملی و رمز عبور در session
-        session['user'] = {
-            'national_code': nationalCode,
-            'password': password  # می‌توانید رمز عبور را در session ذخیره کنید
-        }
-        
-        return redirect(url_for('success'))
-    
+
+            # ذخیره کد ملی و رمز عبور در session
+            session['user'] = {
+                'national_code': national_code,
+                'password': password  # می‌توانید رمز عبور را در session ذخیره کنید
+            }
+
+            return redirect(url_for('handle_success'))
+
+        return "خطای پایگاه داده"
+
     return render_template('register.html')
 
 
 
-@app.route('/success')
-def success():
+@app.route(paths.SUCCESS_ROUTE)
+def handle_success():
+    '''this function handle success page route'''
+
     user = session.get('user', {})
     user_name = user.get('name', 'کاربر')
+
     return render_template('success.html', user_name=user_name)
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
+@app.route(paths.LOGIN_ROUTE, methods=['GET', 'POST'])
+def handle_login():
+    '''this function handle login route'''
+
     error_message = None
     forgot_password = False
-    
+
     if request.method == 'POST':
+
         national_code = request.form['national_code']
         password = request.form['password']
-        
-        try:
-            conn = get_db_connection()
-            cursor = conn.cursor()
-            # تغییر نام جدول به register
-            cursor.execute('SELECT * FROM register WHERE national_code = %s', (national_code,))
-            user = cursor.fetchone()
-            cursor.close()  # بستن cursor
-            conn.close()  # بستن اتصال
-            
+
+        conn, user = helper.read_user_with_national_code(national_code)
+
+        if conn:
+
             if user:
                 # فرض بر این است که password در ایندکس 8 قرار دارد
                 if check_password_hash(user[9], password):  # تغییر ایندکس به 8
-                    session['user'] = {'name': user[2], 'phone': user[1]}  # فرض بر این است که index 2 نام و index 1 شماره تلفن است
-                    return redirect(url_for('dashboard'))
+                    # فرض بر این است که index 2 نام و index 1 شماره تلفن است
+                    session['user'] = {'name': user[2], 'phone': user[1]}
+                    conn.close()  # بستن اتصال
+                    return redirect(url_for('handle_dashboard'))
+
                 else:
                     error_message = "رمز عبور نادرست است."
                     forgot_password = True
+
             else:
                 error_message = "کد کاربری نادرست است."
-        except mysql.connector.Error as e:
-            print(f"Database error: {e}")
+
+        else:
             error_message = "خطای پایگاه داده"
-    
+
     return render_template('login.html', error_message=error_message, forgot_password=forgot_password)
 
 
 
-@app.route('/employer')
-def employer():
+@app.route(paths.EMPLOYER_ROUTE)
+def handle_employer():
+    '''this function handle eployer route'''
+
     return render_template('employer.html')
 
 
-@app.route('/dashboard')
-def dashboard():
-    user = session.get('user')
-    if user:
-        return render_template('dashboard.html', user_name=user.get('name', 'کاربر'))
-    return redirect(url_for('login'))
+@app.route(paths.DASHBOARD_ROUTE)
+def handle_dashboard():
+    '''this functin handle dashboard route'''
 
-@app.route('/search_job')
-def search_job():
+    user = session.get('user')
+
+    if user:
+
+        return render_template('dashboard.html', user_name=user.get('name', 'کاربر'))
+
+    return redirect(url_for('handle_login'))
+
+@app.route(paths.SEARCH_JOB_ROUTE)
+def handle_search_job():
+    '''this function handle search job'''
+
     return 'صفحه جستجوی شغل'
 
 
 
-@app.route('/completion', methods=['GET', 'POST'])
-def completion():
+@app.route(paths.COMPLETION_ROUTE, methods=['GET', 'POST'])
+def handle_completion():
+    '''this function handle completion'''
+
     user = session.get('user')
+
     if not user:
-        return redirect(url_for('login'))
+
+        return redirect(url_for('handle_login'))
 
     user_data = {}
     has_submitted = False
     success_message = None  # برای نمایش پیام موفقیت
 
-    try:
-        with get_db_connection() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(
-                    'SELECT national_code, email, name, last_name, father_name, birth_place, birth_date '
-                    'FROM karjoo.register WHERE phone = %s',
-                    (user['phone'],)
-                )
-                result = cursor.fetchone()
-                if result:
-                    user_data = dict(zip(['national_code', 'email', 'name', 'last_name', 'father_name', 'birth_place', 'birth_date'], result))
-                    has_submitted = True
-                else:
-                    return jsonify({'message': "کاربر یافت نشد."}), 404
-    except mysql.connector.Error as e:
-        print(f"خطای پایگاه داده karjoo: {e}")
+    conn, result = helper.read_user_datas_with_phone(user['phone'])
+
+    if conn:
+
+        if result:
+
+            conn.close()  # بستن اتصال
+            user_data = dict(zip(['national_code', 'email', 'name', 'last_name', 'father_name', 'birth_place', 'birth_date'], result))
+            has_submitted = True
+
+        else:
+
+            return jsonify({'message': "کاربر یافت نشد."}), 404
+
+    else:
+
         return jsonify({'message': "خطای پایگاه داده: لطفاً دوباره تلاش کنید."}), 500
 
-    if request.method == 'POST' and not has_submitted:
+    if request.method == 'POST' and has_submitted:
+
         form_data = request.form.to_dict()
 
         # اعتبارسنجی داده‌ها
         required_fields = ['national_code', 'email', 'name', 'last_name', 'father_name', 'birth_date', 'birth_place']
+
         for field in required_fields:
+
             if field not in form_data or not form_data[field].strip():
+
                 return jsonify({'message': f"فیلد {field} نمی‌تواند خالی باشد."}), 400
 
-        try:
-            with get_db_connection() as conn:
-                with conn.cursor() as cursor:
-                    tables = [
-                        ('Personal_Info', ['national_code', 'gender', 'name', 'last_name', 'father_name', 'birth_date', 'birth_place']),
-                        ('Identification_Info', ['national_code', 'email', 'birth_certificate_number', 'issuance_place', 'religion', 'nationality']),
-                        ('Marital_Health_Status', ['national_code', 'marital_status', 'children_count', 'health_status', 'health_details']),
-                        ('Military_Service', ['national_code', 'service_status', 'exemption_details']),
-                        ('Education', ['national_code', 'last_degree', 'field_of_study', 'gpa', 'graduation_date', 'university_type', 'institute_name', 'city_country']),
-                        ('Work_Experience', ['national_code', 'organization_name', 'job_title', 'contact_number', 'start_date', 'end_date', 'last_salary', 'reason_for_leaving']),
-                        ('Language_Computer', ['national_code', 'reading', 'writing', 'speaking', 'computer_skills']),
-                        ('Specialty_Certificates', ['national_code', 'specialty_name']),
-                        ('Work_Preference', ['national_code', 'work_preference', 'other_details']),
-                        ('Insurance_Status', ['national_code', 'insurance_status', 'insurance_details']),
-                        ('Guarantors', ['national_code', 'name', 'relationship', 'job', 'address', 'phone']),
-                        ('Work_Area', ['national_code', 'work_area', 'preferred_city'])
-                    ]
+        conn, ok = helper.completion_register_user(form_data)
 
-                    for table, fields in tables:
-                        values = [form_data.get(field, '') for field in fields]
-                        placeholders = ', '.join(['%s'] * len(fields))
-                        query = f'INSERT INTO {table} ({", ".join(fields)}) VALUES ({placeholders})'
-                        cursor.execute(query, values)
-
-                conn.commit()
+        if conn and ok:
 
             success_message = "اطلاعات با موفقیت در پایگاه داده ثبت شد."  # پیام موفقیت
+            conn.close()  # بستن اتصال
 
-        except mysql.connector.Error as e:
-            print(f"خطای پایگاه داده karjoo_users: {e}")
+            session['user'] = {'name': form_data['name'], 'phone': form_data["contact_number"]}
+            return redirect(url_for('handle_dashboard'))
+
+        else :
+
             return jsonify({'message': "خطای پایگاه داده: لطفاً دوباره تلاش کنید."}), 500
 
-    site_key = os.environ.get('6LdkmVMqAAAAAG0wgje4UsBRojk3X7HGNDGa5_PC')  # کلید reCAPTCHA باید به درستی تعریف شده باشد
+    site_key = os.environ.get(config.SITE_KEY)
+    print("here")
+
     return render_template('completion.html', user_data=user_data, has_submitted=has_submitted, success_message=success_message, site_key=site_key)
 
 
-@app.route('/profile', methods=['GET', 'POST'])
-def profile():
+@app.route(paths.PROFILE_ROUTE, methods=['GET', 'POST'])
+def handle_profile():
+    '''this function handle profile route'''
+
     user = session.get('user')
+
     if not user:
-        return redirect(url_for('login'))
+        return redirect(url_for('handle_login'))
 
     user_data = None
     message = None
     edit_error = None
 
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        
+    conn, user_data = helper.read_user_with_phone_from_user(user['phone'])
+
+    if conn:
+
         if request.method == 'POST':
+
             if 'edit' in request.form:
-                cursor.execute('SELECT * FROM users WHERE phone = %s', (user['phone'],))
-                user_data = cursor.fetchone()
+
                 conn.close()
                 return render_template('profile.html', user_data=user_data, editing=True)
+
             elif 'save' in request.form:
+
                 name = request.form['name']
                 father_name = request.form['father_name']
-                national_code = request.form['national_code']
                 email = request.form['email']
                 birth_place = request.form['birth_place']
                 birth_date = request.form['birth_date']
 
                 if not all([name, father_name, email, birth_place, birth_date]):
+
                     edit_error = "لطفاً تمامی فیلدها را پر کنید."
                     return render_template('profile.html', user_data=user_data, editing=True, edit_error=edit_error)
 
-                try:
-                    cursor.execute('UPDATE users SET name = %s, father_name = %s, email = %s, birth_place = %s, birth_date = %s WHERE phone = %s',
-                                   (name, father_name, email, birth_place, birth_date, user['phone']))
-                    conn.commit()
+                conn, ok = helper.update_user_datas_with_phone(name, father_name, email, birth_place, birth_date,user['phone'])
 
-                    cursor.execute('SELECT * FROM users WHERE phone = %s', (user['phone'],))
-                    user_data = cursor.fetchone()
-                    
+                if conn and ok:
+
+                    conn.commit()
+                    conn.close()
+                    _, user_data = helper.read_user_with_phone_from_user(user['phone'])
+
                     message = "اطلاعات شما با موفقیت ثبت شد"
+
                     return render_template('profile.html', user_data=user_data, editing=False, message=message)
-                except mysql.connector.Error as e:
+
+                else:
+
                     edit_error = "خطا در ثبت اطلاعات"
                     return render_template('profile.html', user_data=user_data, editing=True, edit_error=edit_error)
 
             elif 'cancel' in request.form:
-                return redirect(url_for('profile'))
+                return redirect(url_for('handle_profile'))
 
-        cursor.execute('SELECT * FROM users WHERE phone = %s', (user['phone'],))
-        user_data = cursor.fetchone()
-        conn.close()
+        _, user_data = helper.read_user_with_phone_from_user(user['phone'])
 
-    except mysql.connector.Error as e:
-        print(f"Database error: {e}")
+    else:
         edit_error = "خطا در ارتباط با پایگاه داده"
 
     return render_template('profile.html', user_data=user_data, editing=False, message=message, edit_error=edit_error)
 
-@app.route('/tamasbama')
-def tamasbama():
+@app.route(paths.CONTACT_US_ROUTE)
+def handle_contact_us():
+    '''this function handle contact us'''
+
     return render_template('tamasbama.html')
 
-@app.route('/logout')
-def logout():
+@app.route(paths.LOGOUT_ROUTE)
+def handle_logout():
+    '''this function handle logout user'''
+
     session.pop('user', None)
-    return redirect(url_for('login'))
+
+    return redirect(url_for('handle_login'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+
+    if config.IS_DEVELOPMENT :
+
+        app.run(port=5000, debug=config.IS_DEVELOPMENT)
+
+    app.run(port=80, debug=config.IS_DEVELOPMENT)

@@ -64,7 +64,7 @@
             <p><strong>کد کاربری:</strong> {{ session['user']['national_code'] }}</p>
             <p><strong>رمز عبور:</strong> {{ session['user']['password'] }}</p>
         </div>
-        <a href="{{ url_for('login') }}" class="back-link">بازگشت به صفحه ورود</a>
+        <a href="{{ url_for('handle_login') }}" class="back-link">بازگشت به صفحه ورود</a>
     </div>
 </body>
 </html>

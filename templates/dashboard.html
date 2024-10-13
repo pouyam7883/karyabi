@@ -245,14 +245,14 @@
             <div class="header-right">
                 <span class="menu-toggle" onclick="toggleMenu()">☰</span>
                 <div class="dropdown-menu">
-                    <a href="{{ url_for('profile') }}">اطلاعات کاربری</a>
-                    <a href="{{ url_for('reset_password') }}">تغییر رمز عبور</a>
-                    <a href="{{ url_for('logout') }}">خروج از سامانه</a>
+                    <a href="{{ url_for('handle_profile') }}">اطلاعات کاربری</a>
+                    <a href="{{ url_for('handle_reset_password') }}">تغییر رمز عبور</a>
+                    <a href="{{ url_for('handle_logout') }}">خروج از سامانه</a>
                 </div>
                 <div class="user-info" id="user-name">{{ user_name }}</div>
             </div>
             <div class="header-left">
-                <a href="{{ url_for('completion') }}" class="completion-button">تکمیل اطلاعات</a>
+                <a href="{{ url_for('handle_completion') }}" class="completion-button">تکمیل اطلاعات</a>
                 <div class="logo">
                     <img src="{{ url_for('static', filename='logo.png') }}" alt="لوگو">
                     <h1>سامانه جامع و یکپارچه کاریابی</h1>
@@ -275,7 +275,7 @@
                 <p>متن پیش فرض ۸: اینجا نیز می‌توانید متنی اضافه کنید.</p>
                 <p>متن پیش فرض ۹: پیش‌نمایش متن در کادر رنگی.</p>
                 <p>متن پیش فرض ۱۰: پایان متن پیش‌فرض.</p>
-                <a href="{{ url_for('search_job') }}" class="search-job-button">جستجوی شغل</a>
+                <a href="{{ url_for('handle_search_job') }}" class="search-job-button">جستجوی شغل</a>
             </div>
         </div>
     </main>

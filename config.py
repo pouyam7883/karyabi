@@ -1,0 +1,18 @@
+''' CONFIGS of project '''
+
+# MAIN CONFIGS
+
+IS_DEVELOPMENT              = True
+START_POINT_RANDOM_OTP_CODE = 1000
+END_POINT_RANDOM_OTP_CODE   = 9999
+
+# DATABASE SETTINGS
+
+MYSQL_HOST     = "localhost"
+MYSQL_DATABASE = "karjoo"
+MYSQL_USER     = "karjoo_admin"
+MYSQL_PASS     = "karjoo_password"
+
+# RECAPTCHA SETTINGS
+
+SITE_KEY = '6LdkmVMqAAAAAG0wgje4UsBRojk3X7HGNDGa5_PC'

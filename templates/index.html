@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>صفحه اصلی</title>
     <style>
-        <!-- salam -->
         /* Resetting some default styles */
         body, h1, h2, h3, p {
             margin: 0;
@@ -254,8 +253,8 @@
     <header>
         <div class="header-container">
             <div>
-                <a href="{{ url_for('auth') }}" class="menu-button login-register">ورود | ثبت‌نام</a>
-                <a href="{{ url_for('employer') }}" class="menu-button employer-section">بخش کارفرمایان</a>
+                <a href="{{ url_for('handle_auth') }}" class="menu-button login-register">ورود | ثبت‌نام</a>
+                <a href="{{ url_for('handle_employer') }}" class="menu-button employer-section">بخش کارفرمایان</a>
             </div>
             <div class="logo">
                 <img src="{{ url_for('static', filename='logo.png') }}" alt="لوگو">
@@ -300,7 +299,7 @@
             <div class="footer-section">
                 <h3>سامانه</h3>
                 <ul>
-                    <li><a href="{{ url_for('tamasbama') }}">تماس با ما</a></li>
+                    <li><a href="{{ url_for('handle_contact_us') }}">تماس با ما</a></li>
                 </ul>
             </div>
             <div class="footer-section">
